@@ -1,0 +1,8 @@
+.photo-tags {
+  height: 55px;
+  overflow: hidden;
+}
+
+.photo-tags span {
+    font-weight: bold;
+}

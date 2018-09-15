@@ -1,0 +1,6 @@
+.photos-grid {
+  overflow: auto;
+  width: 60%;
+  margin: 0 auto;
+  text-align: center;
+}
