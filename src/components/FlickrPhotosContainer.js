@@ -8,8 +8,6 @@ const MAX_BOXES_PER_PAGE = 120;
 const DEFAULT_PAGE = 1;
 const LOAD_MORE_AFTER_PAGE = 5;
 const DEFAULT_FILTER = 'recent';
-let timer = 0;
-
 class FlickrPhotosContainer extends Component {
 
     constructor(props) {
@@ -18,10 +16,9 @@ class FlickrPhotosContainer extends Component {
             photos: '',
             filter: DEFAULT_FILTER,
             step: DEFAULT_BOX_COUNT,
-            page: DEFAULT_PAGE,
-            loading: false
+            page: DEFAULT_PAGE
         };
-        this.handleButtonClick = this.handleButtonClick.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
         this.updateGrid = this.updateGrid.bind(this);
     }
 
@@ -48,15 +45,11 @@ class FlickrPhotosContainer extends Component {
     }
 
     callApiAndUpdateState() {
-        this.setState({
-            loading: true
-        });
         this.callFlickrApy()
             .then(res => {
                 this.setState(this.handlePhotoPaging);
                 this.setState({
-                    photos: res,
-                    loading: false
+                    photos: res
                 })
             })
             .catch(err => console.log(err));
@@ -68,24 +61,20 @@ class FlickrPhotosContainer extends Component {
         return flickrApiEndPoint
     }
 
-    handleButtonClick() {
-        clearTimeout(timer);
-
-        timer = setTimeout(() => {
-            this.callFlickrApy()
-            .then(res => {
-                this.setState(this.handlePhotoPaging);
-                this.setState((state) => {
-                    const photos = state.photos;
-                    photos.photo = [...photos.photo, ...res.photo];
-                    
-                    return {
-                        photos: photos
-                    }
-                })
+    handleScroll() {
+        this.callFlickrApy()
+        .then(res => {
+            this.setState(this.handlePhotoPaging);
+            this.setState((state) => {
+                const photos = state.photos;
+                photos.photo = [...photos.photo, ...res.photo];
+                
+                return {
+                    photos: photos
+                }
             })
-            .catch(err => console.log(err));
-        }, 500);
+        })
+        .catch(err => console.log(err));
     }
 
     updateGrid(filter) {
@@ -113,12 +102,10 @@ class FlickrPhotosContainer extends Component {
                 <PhotosGrid 
                     photos={this.state.photos} 
                     filter={this.state.filter}
+                    loadMore={this.handleScroll}
                 />
                 {this.state.photos && this.state.photos.photo.length ? (
-                    <button
-                        onClick={this.handleButtonClick}
-                        className="load-more-btn"
-                    >Load More</button>
+                    ''
                 ) : (
                     <div className="empty">
                         Nothing to display
